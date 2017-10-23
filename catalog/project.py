@@ -342,6 +342,8 @@ def newCategory():
 def deleteCategory(category_id):
     categoryToDelete = session.query(
         Categories).filter_by(id=category_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         session.delete(categoryToDelete)
         flash('%s Successfully Deleted' % categoryToDelete.name)
@@ -417,6 +419,8 @@ def newCategoryItem(category_id):
 @app.route(
     '/<int:category_id>/<int:item_id>/edititem/', methods=['GET', 'POST'])
 def editItem(category_id, item_id):
+    if 'username' not in login_session:
+        return redirect('/login')
     category = session.query(Categories).filter_by(id=category_id).one()
     categories = session.query(Categories).order_by(asc(Categories.name))
     item = session.query(CategoryItem).filter_by(
@@ -442,8 +446,8 @@ def editItem(category_id, item_id):
 @app.route(
     '/<int:category_id>/<int:item_id>/deleteitem/', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
-    # if 'username' not in login_session:
-    #     return redirect('/login')
+    if 'username' not in login_session:
+        return redirect('/login')
     category = session.query(Categories).filter_by(id=category_id).one()
     itemToDelete = session.query(CategoryItem).filter_by(id=item_id).one()
     if request.method == 'POST':

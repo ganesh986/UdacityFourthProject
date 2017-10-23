@@ -21,7 +21,7 @@ class Categories(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user = relationship(User, cascade="all, delete-orphan")
 
     @property
     def serialize(self):
@@ -41,9 +41,9 @@ class CategoryItem(Base):
     price = Column(String(8))
     insert_date = Column(DateTime)
     categories_id = Column(Integer, ForeignKey('categories.id'))
-    categories = relationship(Categories)
+    categories = relationship(Categories, cascade="all, delete-orphan")
     user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user = relationship(User, cascade="all, delete-orphan")
 
     @property
     def serialize(self):
