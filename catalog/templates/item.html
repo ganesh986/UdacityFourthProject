@@ -1,0 +1,72 @@
+{% extends "main.html" %}
+{% block content %}
+</div>
+<div id="container">
+    <header>
+		<div class="width">
+    		<h1>Catalog App</h1>
+       	</div>
+        <div class="row top-menu">
+            <div class="col-md-6 text-right">
+                        {%if 'username' not in session %}
+                <a href="{{url_for('showLogin')}}">Click Here to Login </a>
+                {% else %}
+                <a href="{{url_for('disconnect')}}">Logout </a>
+                {% endif %}    
+            </div>
+        </div>
+    </header>
+    <nav>
+		<div class="width">
+    		<ul>
+        		<li class="start selected"><a href={{url_for('showCategories')}}>Home</a></li>
+        	</ul>
+		</div>
+    </nav>
+    <div id="body" class="width">
+		<section id="content">
+			<article>
+				<h2>Selected item: {{item.name}}</h2>
+                <br/>
+                <div class = 'flash'>
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                    <ul>
+                    {% for message in messages %}
+                        <li> <strong> {{ message }} </strong> </li>
+                    {% endfor %}
+                    </ul>
+                    {% endif %}
+                <br/>
+                {% endwith %}
+                <h3>Description:</h3>
+                <span>{{item.description}}</span>
+                <br/><br/>
+                <h3>Price:</h3>
+                <span>{{item.price}} $</span>
+                </br><br/>
+				<a href="{{url_for('editItem',category_id =  category.id, item_id=item.id)}}" class="button">Edit Item</a>
+                <a href="{{url_for('deleteItem',category_id =  category.id, item_id=item.id)}}" class="button">Delete Item</a>
+			</article>
+		</section>
+        <aside class="sidebar">
+            <ul>	
+               <li>
+                    <h4>Categories</h4>
+					</br>
+					{% for category in categories %}				
+						<a href = "{{url_for('showCategoryItems',category_id = category.id)}}">
+							<div class="row">
+                                <h3>{{category.name}}</h3>
+							</div>
+						</a>
+					{% endfor %}
+					</br>
+					<a href="{{url_for('newCategory')}}" class="button">Add Category</a>
+                </li>
+            </ul>
+        </aside>
+    	<div class="clear"></div>
+    </div>
+</div>
+{% endblock %}
