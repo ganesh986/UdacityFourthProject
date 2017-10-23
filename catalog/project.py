@@ -364,7 +364,7 @@ def showCategoryItems(category_id):
         categories_id=category_id).all()
     if 'username' not in login_session:
         return render_template(
-            'publicItems.html', 
+            'publicItems.html',
             items=items, category=category, categories=categories)
     else:
         return render_template(
@@ -419,12 +419,17 @@ def newCategoryItem(category_id):
 @app.route(
     '/<int:category_id>/<int:item_id>/edititem/', methods=['GET', 'POST'])
 def editItem(category_id, item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    category = session.query(Categories).filter_by(id=category_id).one()
-    categories = session.query(Categories).order_by(asc(Categories.name))
     item = session.query(CategoryItem).filter_by(
         categories_id=category_id, id=item_id).one()
+    if 'username' not in login_session:
+        return redirect('/login')
+    if item.user_id != login_session['user_id']:
+        return "<script>function myFunction() "\
+            "{alert('You are not authorized to edit this item. Please create "\
+            "your own category in order to edit.');}</script>"\
+            "<body onload='myFunction()'>"
+    category = session.query(Categories).filter_by(id=category_id).one()
+    categories = session.query(Categories).order_by(asc(Categories.name))
     if request.method == 'POST':
         if request.form['name']:
             item.name = request.form['name']
@@ -446,10 +451,15 @@ def editItem(category_id, item_id):
 @app.route(
     '/<int:category_id>/<int:item_id>/deleteitem/', methods=['GET', 'POST'])
 def deleteItem(category_id, item_id):
+    itemToDelete = session.query(CategoryItem).filter_by(id=item_id).one()
     if 'username' not in login_session:
         return redirect('/login')
+    if itemToDelete.user_id != login_session['user_id']:
+        return "<script>function myFunction() {alert('You are "\
+            "not authorized to delete this item. Please create your "\
+            "own category in order to delete.');}</script>"\
+            "<body onload='myFunction()'>"
     category = session.query(Categories).filter_by(id=category_id).one()
-    itemToDelete = session.query(CategoryItem).filter_by(id=item_id).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
